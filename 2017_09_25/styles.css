@@ -1,6 +1,3 @@
-body {
-    font-family: "helvetica"
-}
 .box {
     width: 200px;
     height: 200px;
@@ -45,7 +42,7 @@ span#value {
 }
 
 .details {
-    display: inline-block;
+    padding-right: 20px;
 }
 
 .v-bar {

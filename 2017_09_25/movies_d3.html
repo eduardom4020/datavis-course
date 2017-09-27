@@ -3,7 +3,11 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Movies D3</title>
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
 		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+		<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 		<link rel="stylesheet" href="styles.css">
 	</head>
 
@@ -14,10 +18,10 @@
 		<div id="chart1" class="chart_container"> </div>
 
 		<script type="text/javascript">
-			function render(div_id, data, comparator, fun_max, fun_title, fun_value) {
-				var max = d3.max(data, fun_max);
+			function render(data, comparator) {
+				var max = d3.max(data, function(d) { return d.Worldwide_Gross_M; });
 
-				var details = d3.select("#"+div_id)
+				var details = d3.select("#chart1")
 								.selectAll("div.h-bar")
 								.data(data)
 								.enter()
@@ -28,20 +32,18 @@
 
 				details.append("span")
 						.attr("id", "title")
-						.text(fun_title);
+						.text(function (d) { return "Título: " + d.Film; });
 
 		        details.append("br");
 
 				details.append("span")
 						.attr("id", "value")
-						.text(fun_value);
+						.text(function (d) { return "Bilheteria: " + d.Worldwide_Gross_M; });
 
-				d3.select("#"+div_id)
+				d3.select("#chart1")
 					.selectAll("div.h-bar")
 					.data(data)
-					.style("width", function (d) {
-		                return (screen.width * 0.8 * d.Worldwide_Gross_M / max) + "px";
-		            })
+					.style("width", function (d) { return (screen.width * 0.8 * d.Worldwide_Gross_M / max) + "px"; })
 
 				if(comparator)
 					d3.select("body")
@@ -53,14 +55,8 @@
 		        return a.Worldwide_Gross_M < b.Worldwide_Gross_M ? 1 : -1;
 		    };
 
-		    var f_max = function(d) { return d.Worldwide_Gross_M; }
-
-		    var f_title = function (d) { return "Título: " + d.Film; }
-
-		    var f_value = function (d) { return "Bilheteria: " + d.Worldwide_Gross_M; }
-
 		    d3.json("movies.json", function(error, json){ 
-		        render("chart1", json, compareWorldWideGross, f_max, f_title, f_value);
+		        render(json, compareWorldWideGross);
 		    });
 		</script>
 
