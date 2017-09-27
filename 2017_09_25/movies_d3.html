@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Movies D3</title>
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+
+	<body>
+
+		<h1> Gráfico de Bilheteria (Decrescente) </h1>
+		
+		<div id="chart1" class="chart_container"> </div>
+
+		<script type="text/javascript">
+			function render(div_id, data, comparator, fun_max, fun_title, fun_value) {
+				var max = d3.max(data, fun_max);
+
+				var details = d3.select("#"+div_id)
+								.selectAll("div.h-bar")
+								.data(data)
+								.enter()
+									.append("div")
+										.attr("class", "h-bar")
+										.append("div")
+											.attr("class", "details")												
+
+				details.append("span")
+						.attr("id", "title")
+						.text(fun_title);
+
+		        details.append("br");
+
+				details.append("span")
+						.attr("id", "value")
+						.text(fun_value);
+
+				d3.select("#"+div_id)
+					.selectAll("div.h-bar")
+					.data(data)
+					.style("width", function (d) {
+		                return (screen.width * 0.8 * d.Worldwide_Gross_M / max) + "px";
+		            })
+
+				if(comparator)
+					d3.select("body")
+					    .selectAll("div.h-bar") 
+					    .sort(comparator);
+			}	
+
+			var compareWorldWideGross = function (a, b) { 
+		        return a.Worldwide_Gross_M < b.Worldwide_Gross_M ? 1 : -1;
+		    };
+
+		    var f_max = function(d) { return d.Worldwide_Gross_M; }
+
+		    var f_title = function (d) { return "Título: " + d.Film; }
+
+		    var f_value = function (d) { return "Bilheteria: " + d.Worldwide_Gross_M; }
+
+		    d3.json("movies.json", function(error, json){ 
+		        render("chart1", json, compareWorldWideGross, f_max, f_title, f_value);
+		    });
+		</script>
+
+	</body>
+</html>
