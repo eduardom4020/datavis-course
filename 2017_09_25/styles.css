@@ -9,12 +9,17 @@
 }
 
 .blue {
-    background-color: #add8e6;
+    background-color: #8080ff;
     color: #f0f8ff;
 }
 
 .red {
-    background-color: #e9967a;
+    background-color: #ff5050;
+    color: #f0f8ff;
+}
+
+.green {
+    background-color: #33cc33;
     color: #f0f8ff;
 }
 
@@ -27,7 +32,6 @@ h1 {
     min-height: 8px;
     max-height: 30px;
     min-width: 10px;
-    background-color: steelblue;
     margin-bottom: 2px;
     color: #f0f8ff;
     text-align: right;

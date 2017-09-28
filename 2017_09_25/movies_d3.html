@@ -24,7 +24,7 @@
 		<div id="chart3" class="chart_container"> </div>
 
 		<script type="text/javascript">
-			function render(data, comparator, title_id, title_name, chart_id, field, value_desc) {
+			function render(data, comparator, title_id, title_name, chart_id, field, value_desc, color) {
 				d3.select("#"+title_id).text(title_name);
 
 				var max = d3.max(data, function(d) { return d[field]; });
@@ -34,7 +34,7 @@
 								.data(data)
 								.enter()
 									.append("div")
-										.attr("class", "h-bar")
+										.attr("class", "h-bar " + color)
 										.append("div")
 											.attr("class", "details")												
 
@@ -68,7 +68,7 @@
 		    };
 
 		    d3.json("movies.json", function(error, json){ 
-		        render(json, compareWorldWideGross, "title1", "Gráfico de Bilheteria (Decrescente)", "chart1", "Worldwide_Gross_M", "Bilheteria");
+		        render(json, compareWorldWideGross, "title1", "Gráfico de Bilheteria (Decrescente)", "chart1", "Worldwide_Gross_M", "Bilheteria", "red");
 		    });
 
 		    //QUESTION 2 --------------------------------------------------------------------------------------------
@@ -78,12 +78,12 @@
 		    };
 
 		    d3.json("movies.json", function(error, json){ 
-		        render(json, compareBudgetM, "title2", "Gráfico do Orçamento (Decrescente)", "chart2", "Budget_M", "Orçamento");
+		        render(json, compareBudgetM, "title2", "Gráfico do Orçamento (Decrescente)", "chart2", "Budget_M", "Orçamento", "blue");
 		    });
 
 		    //QUESTION 3 --------------------------------------------------------------------------------------------
 
-		    function renderProfit(data, comparator, title_id, title_name, chart_id) {
+		    function renderProfit(data, comparator, title_id, title_name, chart_id, color) {
 				d3.select("#"+title_id).text(title_name);
 
 				var max = d3.max(data, function(d) { return (d.Worldwide_Gross_M - d.Budget_M); });
@@ -93,7 +93,7 @@
 								.data(data)
 								.enter()
 									.append("div")
-										.attr("class", "h-bar")
+										.attr("class", "h-bar "  + color)
 										.append("div")
 											.attr("class", "details")												
 
@@ -125,7 +125,7 @@
 		    };
 
 		    d3.json("movies.json", function(error, json){ 
-		        renderProfit(json, compareProfit, "title3", "Gráfico do Lucro (Decrescente)", "chart3");
+		        renderProfit(json, compareProfit, "title3", "Gráfico do Lucro (Decrescente)", "chart3", "green");
 		    });
 
 		</script>
