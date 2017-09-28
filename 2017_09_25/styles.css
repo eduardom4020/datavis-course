@@ -24,7 +24,8 @@ h1 {
 }
 
 .h-bar {
-    min-height: 15px;
+    min-height: 8px;
+    max-height: 30px;
     min-width: 10px;
     background-color: steelblue;
     margin-bottom: 2px;
@@ -33,15 +34,17 @@ h1 {
     padding-right: 2px;
 }
 
-span#title {
+span.title1 {
     font-size: 15px;
 }
 
-span#value {
+span.value1 {
     font-size: 10px;
 }
 
 .details {
+    padding-top: 0px;
+    padding-bottom: 0px;
     padding-right: 20px;
 }
 
