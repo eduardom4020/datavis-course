@@ -3,22 +3,33 @@
 	<head>
 		<title>Super Heroes Vis</title>
 		
-		<script src="https://d3js.org/d3.v4.min.js"></script>	
-		<script src="jquery-3.2.1.min.js"></script>	
+		<script src="http://d3js.org/d3.v2.js"></script>
+   		<script src="js/crossfilter.js" charset="utf-8"></script>
+		<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
 	</head>
 
 	<body>
 
+		<div id="chartContainer"></div>
+
 		<script type="text/javascript">
+			$("document").ready(function() {
+				d3.csv("superheroes_data.csv", function(data) {					//extracts data from csv file	
+					var facts = crossfilter(data);
+					var rate_dim = facts.dimension(function(d) {
+						return d.Rate;
+					});
 
-			var data = d3.csvParse("superheroes_data.csv");		//extracts data from csv file
-
-			$(document).ready(function() {
-				d3.select("#chartContainer")					//select a div to put chart in
-					.data(data)									//connect the csv data with the div. Iterates for all data objects
-					.enter()									//enter in an object of the iteration. Will aplly these changes for all objects
-						
-
+					var top_5 = rate_dim.top(6);
+					
+					d3.select("#chartContainer")								//select a div to put chart in
+						.data(top_5)											//connect the csv data with the div. Iterates for all data objects
+						.enter()												//enter in an object of the iteration. Will aplly these changes for all objects
+							.append("p")
+								.text(function(d) {
+									return "Filme: " + d.Title + " Nota: " + d.Rate;
+								});
+					});								
 			});
 
 		</script>
