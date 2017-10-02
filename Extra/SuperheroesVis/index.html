@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Super Heroes Vis</title>
+		
+		<script src="https://d3js.org/d3.v4.min.js"></script>	
+		<script src="jquery-3.2.1.min.js"></script>	
+	</head>
+
+	<body>
+
+		<script type="text/javascript">
+
+			var data = d3.csvParse("superheroes_data.csv");		//extracts data from csv file
+
+			$(document).ready(function() {
+				d3.select("#chartContainer")					//select a div to put chart in
+					.data(data)									//connect the csv data with the div. Iterates for all data objects
+					.enter()									//enter in an object of the iteration. Will aplly these changes for all objects
+						
+
+			});
+
+		</script>
+
+	</body>
+</html>
