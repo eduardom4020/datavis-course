@@ -11,46 +11,76 @@
 
 </head>
 <body>
-    <div><h1>Apurado de Bilheterias por Ano</h1>
-        <div id="chart1"></div>
+    <div class="container">
+        <div id="chart1" style="margin-bottom: 32px;">
+            <h1>Apurado de Bilheterias por Ano</h1>
+        </div>
+        
+        <div id="chart2">
+            <h1>Apurado de Bilheterias por Gênero</h1>
+        </div>
     </div>
 
 	<script type="text/javascript">
-        var chart = dc.barChart('#chart1');
+        var chart1 = dc.barChart('#chart1');
+        var chart2 = dc.barChart('#chart2');
 
 		d3.json("movies.json", function(data){
             data.forEach(function(d){
                 d.total = d.Worldwide_Gross_M + d.Budget_M;
             });
 
-            //criando um crossfilter
-            var facts = crossfilter(data);
+        //criando um crossfilter
+        var facts = crossfilter(data);
 
-            var yearDim = facts.dimension(function(d){
-                return d.Year;
-            });
+        var yearDim = facts.dimension(function(d){
+            return d.Year;
+        });
 
-            var totalGroup = yearDim.group().reduceSum(function(d){
-                return d.total;
-            });
+        var genreDim = facts.dimension(function(d){
+            return d.Genre;
+        });
 
-            chart.width(800)
-                .height(400)
-                .margins({top: 50, right: 50, bottom: 50, left: 55})
-                .dimension(yearDim)
-                .x(d3.scale.ordinal())
-                .xUnits(dc.units.ordinal)
-                .brushOn(false)    
-                .xAxisLabel('Ano')
-                .yAxisLabel('Total das Bilheterias')
-                .barPadding(0.1)
-                .group(totalGroup)
-                .ordinalColors(['steelblue'])
-                .renderHorizontalGridLines(true);
+        var totalGroup1 = yearDim.group().reduceSum(function(d){
+            return d.total;
+        });
 
-            dc.renderAll();
+        var totalGroup2 = genreDim.group().reduceSum(function(d){
+            return d.total;
+        });
+
+        chart1.width(800)
+            .height(400)
+            .margins({top: 50, right: 50, bottom: 50, left: 55})
+            .dimension(yearDim)
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .brushOn(false)    
+            .xAxisLabel('Ano')
+            .yAxisLabel('Total das Bilheterias')
+            .barPadding(0.1)
+            .group(totalGroup1)
+            .ordinalColors(['steelblue'])
+            .renderHorizontalGridLines(true);
+
+        chart2.width(800)
+            .height(400)
+            .margins({top: 50, right: 50, bottom: 50, left: 55})
+            .dimension(genreDim)
+            .x(d3.scale.ordinal().domain(["Fantasy", "Action", "Animation", "Adventure", "Thriller", "Drama", "Romance"]))
+            .xUnits(dc.units.ordinal)
+            .brushOn(false)    
+            .xAxisLabel('Gênero')
+            .yAxisLabel('Total das Bilheterias')
+            .barPadding(0.1)
+            .group(totalGroup2)
+            .ordinalColors(['darkorange'])
+            .renderHorizontalGridLines(true);
+
+        dc.renderAll();
 
 		});
-	</script>			
+	</script>
+
 </body>
 </html>
