@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Carregando dados de um arquivo csv</title>
+    <link rel="stylesheet" href="css/dc.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/crossfilter.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/dc.js" charset="utf-8"></script>
+
+</head>
+<body>
+    <div><h1>Apurado de Bilheterias por Ano</h1>
+        <div id="chart1"></div>
+    </div>
+
+	<script type="text/javascript">
+        var chart = dc.barChart('#chart1');
+
+		d3.json("movies.json", function(data){
+            data.forEach(function(d){
+                d.total = d.Worldwide_Gross_M + d.Budget_M;
+            });
+
+            //criando um crossfilter
+            var facts = crossfilter(data);
+
+            var yearDim = facts.dimension(function(d){
+                return d.Year;
+            });
+
+            var totalGroup = yearDim.group().reduceSum(function(d){
+                return d.total;
+            });
+
+            chart.width(800)
+                .height(400)
+                .margins({top: 50, right: 50, bottom: 50, left: 55})
+                .dimension(yearDim)
+                .x(d3.scale.ordinal())
+                .xUnits(dc.units.ordinal)
+                .brushOn(false)    
+                .xAxisLabel('Ano')
+                .yAxisLabel('Total das Bilheterias')
+                .barPadding(0.1)
+                .group(totalGroup)
+                .ordinalColors(['steelblue'])
+                .renderHorizontalGridLines(true);
+
+            dc.renderAll();
+
+		});
+	</script>			
+</body>
+</html>

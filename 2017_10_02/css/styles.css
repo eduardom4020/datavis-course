@@ -2,4 +2,10 @@ body {
     font-family: "helvetica"
 }
 
+div {
+	margin-left: 16px;
+}
 
+#chart1 {
+	margin-bottom: 32px;
+}
