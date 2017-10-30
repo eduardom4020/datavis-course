@@ -28,6 +28,13 @@ function Network() {
   }
 
   function setupData(data) {
+    var circleRadius, countExtent;
+    // initialize circle radius scale
+    countExtent = d3.extent(data.nodes, function(d) {
+      return d.playcount;
+    });
+    circleRadius = d3.scale.sqrt().range([3, 15]).domain(countExtent);
+
     //First let's randomly dispose data.nodes (x/y) within the the width/height
     // of the visualization and set a fixed radius for now
     data.nodes.forEach(function(n) {
@@ -37,7 +44,7 @@ function Network() {
       n.x = randomnumber = Math.floor(Math.random() * width);
       n.y = randomnumber = Math.floor(Math.random() * height);
       // add radius to the node so we can use it later
-      n.radius = 3;
+      n.radius = circleRadius(n.playcount);
     });
     // Then we will create a map with
     // id's -> node objects
@@ -54,12 +61,22 @@ function Network() {
 
   // Mouseover tooltip function
   function showDetails(d, i) {
-    
+    var content;
+    content = '<p class="main">' + d.name + '</span></p>';
+    content += '<hr class="tooltip-hr">';
+    content += '<p class="main">' +d.artist + '</span></p>';
+    tooltip.showTooltip(content, d3.event);
   }
 
   // Mouseout function
   function hideDetails(d, i) {
-    
+    tooltip.hideTooltip();
+
+    node.style("stroke", function(n) {
+      return '#555';
+    }).style("stroke-width", function(n){
+      return 1.0;
+    });
   }
 
   // enter/exit display for nodes
@@ -78,6 +95,8 @@ function Network() {
                       .attr("r", function(d) {
                         return d.radius;})
                       .style("stroke-width", 1.0);
+
+    node.on("mouseover", showDetails).on("mouseout", hideDetails);
   }
 
   // enter/exit display for links
