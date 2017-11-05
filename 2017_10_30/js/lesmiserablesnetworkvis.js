@@ -27,29 +27,38 @@ function Network() {
     return nodesMap;
   }
 
-  function relations(data) {
-    var result = [];
+  function node_relations(links, node) {
+    var rel = 0;
 
-    data.nodes.forEach(function(node){
-      var rel = 0;
+    links.forEach(function(link){
+      if(node.id == link.source || node.id == link.target) {
+        rel += 1;
+      }
+    }); 
 
-      data.links.forEach(function(link){
-        if(node.id == link.source || node.id == link.target) {
-          rel += 1;
-        }
-      }); 
-
-      result.append({name: node.id, relations: rel});
-    });
+    return rel;
   }
 
   function setupData(data) {
-    var circleRadius, countExtent;
+    var circleRadius, countExtent, colorScale;
     // initialize circle radius scale
     countExtent = d3.extent(data.nodes, function(d) {
-      return d.playcount;
+      var rel = 0;
+
+      data.links.forEach(function(link){
+        if(d.id == link.source || d.id == link.target) {
+          rel += 1;
+        }
+      });
+
+      return rel;
     });
+
     circleRadius = d3.scale.sqrt().range([3, 15]).domain(countExtent);
+
+    colorScale = d3.scale.linear()
+                         .domain(countExtent)
+                         .range(["#ffe2b2", "#f90000"]);
 
     //First let's randomly dispose data.nodes (x/y) within the the width/height
     // of the visualization and set a fixed radius for now
@@ -59,8 +68,15 @@ function Network() {
       // of the visualization
       n.x = randomnumber = Math.floor(Math.random() * width);
       n.y = randomnumber = Math.floor(Math.random() * height);
+
+      //for tooltip use
+      n.relations = node_relations(data.links, n);
+
       // add radius to the node so we can use it later
-      n.radius = circleRadius(n.playcount);
+      n.radius = circleRadius(n.relations);
+
+      //to paint
+      n.color = colorScale(n.relations);
     });
     // Then we will create a map with
     // id's -> node objects
@@ -78,9 +94,9 @@ function Network() {
   // Mouseover tooltip function
   function showDetails(d, i) {
     var content;
-    content = '<p class="main">' + d.name + '</span></p>';
+    content = '<p class="main"> Personagem: ' + d.id + '</span></p>';
     content += '<hr class="tooltip-hr">';
-    content += '<p class="main">' +d.artist + '</span></p>';
+    content += '<p class="main"> Relações: ' + d.relations + '</span></p>';
     tooltip.showTooltip(content, d3.event);
   }
 
@@ -110,6 +126,8 @@ function Network() {
                         return d.y;})
                       .attr("r", function(d) {
                         return d.radius;})
+                      .style("fill", function(d) {
+                        return d.color;})
                       .style("stroke-width", 1.0);
 
     node.on("mouseover", showDetails).on("mouseout", hideDetails);
