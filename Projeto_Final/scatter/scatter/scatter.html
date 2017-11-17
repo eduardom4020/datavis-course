@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+  <title>Taxa de desemprego nos EUA em 2008</title>
+    
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+  <!-- Bootstrap includes -->
+    <script src="js/crossfilter.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/dc.js" charset="utf-8"></script>
+  	<script src="https://d3js.org/d3.v3.min.js"></script>
+  	<script src="https://d3js.org/queue.v1.min.js"></script>
+</head>
+<body>
+  <div id="container" class="container">
+    <header>
+	   <h1>Teste</h1>
+    </header>
+   <div id="list-movie"></div>
+   <div id="list-country"></div>
+   <div id="dc-movies-graph">
+    
+   </div>
+   <div id="dc-countries-graph">
+    
+   </div>
+  </div>
+  
+<script>
+
+var width = 960,
+    height = 600;
+
+var percentsByCountry = d3.map();
+var grossByCountry = d3.map();
+
+//Create a quantize color scale here
+// Consider that the unemployment rate goes from 0 to 15% (.15)
+// display the colors in nine different levels of greens (using colorbrewer)
+
+queue()
+    // .defer(d3.tsv, "data/2016_general.csv")
+    
+    .defer(d3.tsv, 'data/2016_foreign.csv') 
+    //   function(d) {
+    //   var ctr = d.Country
+    //   if (!grossByCountry.has(d.Title)){
+    //     grossByCountry.set(d.Title, {ctr: parseFloat(d.Total_Gross)})
+    //   }
+
+    //   else 
+    //     grossByCountry.get(d.Title)[d.Country] = parseFloat(d.Total_Gross)
+   
+    // })
+    .defer(d3.tsv, "data/2016_countries.csv", 
+      function(d) { percentsByCountry.set(d.Name, {chr: parseFloat(d.ChristianPercent),
+                                                   mus: parseFloat(d.MuslimPercent),
+                                                   ath: parseFloat(d.AtheistPercent),
+                                                   hin: parseFloat(d.HinduPercent),
+                                                   bud: parseFloat(d.BuddhistPercent),
+                                                   flk: parseFloat(d.FolkReligionPercent),
+                                                   oth: parseFloat(d.OtherPercent),
+                                                   jew: parseFloat(d.JewishPercent)}
+                                              );})
+    .await(ready);
+
+function ready(error, data) {
+  var moviesRowChart = dc.rowChart("#dc-movies-graph")
+  var countriesRowChart = dc.rowChart("#dc-countries-graph")
+  //console.log(data);
+  //console.log(percentsByCountry);
+
+  var facts = crossfilter(data);
+
+  var movieDim = facts.dimension(function(d) {
+    return d.Title;
+  }).filter(function(d) {
+    return d == "Zootopia";    
+  });
+
+  var countryDim = facts.dimension(function(d) {
+    return d.Country;
+  })
+
+//  var movieGroup = movieDim.group().reduceSum(function(d) {
+//    return parseFloat(d.Total_Gross);
+//  }).top(1);
+
+  var countryGroup = countryDim.group().reduceSum(function(d) {
+    return parseFloat(d.Total_Gross);
+  }).top(Infinity);
+
+  console.log(movieDim.top(Infinity));
+  console.log(countryGroup);
+
+  /*var grossDim = movieDim(function(d) {
+    return d.Total_Gross;
+  }).filter(function(d) {
+    return d > 0;    
+  });
+
+  var countryGroup2 = grossDim.group().reduceSum(function(d) {
+    return parseFloat(d.Total_Gross);
+  }).top(Infinity);
+
+  console.log(countryGroup2);*/
+
+  // moviesRowChart.width(500)
+  //   .height(500)
+  //   .dimension(movieDim)
+  //   .group(countryGroup)
+
+  // countriesRowChart.width(500)
+  //   .height(500)
+  //   .dimension(countryDim)
+  //   .group(movieGroup)
+  //       // .columns([
+  //       //   function(d){return d.Title},
+  //       //   function(d){return d.Total_Gross}
+  //       // ])
+  //       // .sortBy(function(d) {return d.Total_Gross})
+  //       // .order(d3.descending)
+
+  //   // Render the Charts
+  // dc.renderAll();
+
+}
+
+</script>
+</body>
+</html>
